@@ -1,8 +1,10 @@
 <?php
 /**
  * @file
- * Drupal needs this blank file.
+ * Code for the Deweb Commerce Checkout feature.
  */
+
+include_once 'deweb_commerce_checkout.features.inc';
 
 /**
  * Implements hook_commerce_checkout_pane_info()
@@ -16,4 +18,95 @@ function deweb_commerce_checkout_commerce_checkout_pane_info() {
     'base' => 'deweb_commerce_checkout_pane',
   );
   return $panes;
+}
+
+
+/**
+* Implements hook_form_alter
+*
+*/
+function deweb_commerce_checkout_form_alter(&$form, $form_state, $form_id) {
+  //kpr($form);
+
+  if ($form_id == 'commerce_checkout_form_checkout') {
+    // Shipping address block form tweak
+    if (isset($form['customer_profile_shipping']['commerce_customer_address'])) {
+      $shipping_customer_address = &$form['customer_profile_shipping']['commerce_customer_address'][LANGUAGE_NONE][0];
+
+      if (isset($shipping_customer_address['street_block'])) {
+        $shipping_customer_address['street_block']['premise']['#access'] = false;
+        $shipping_customer_address['street_block']['thoroughfare']['#title'] = t('Address');
+      }
+      if (isset($shipping_customer_address['locality_block'])) {
+        $locality = &$shipping_customer_address['locality_block'];
+        array_shift($locality['#attributes']);
+        $locality['#weight'] = -10;
+        $locality['postal_code']['#required'] = false;
+        $locality['postal_code']['#access'] = false;
+        $locality['administrative_area']['#required'] = false;
+        $locality['administrative_area']['#access'] = false;
+      }
+    }
+
+    // Billing address block form tweak
+    if (isset($form['customer_profile_billing']['commerce_customer_address'])) {
+      $billing_customer_address = &$form['customer_profile_billing']['commerce_customer_address'][LANGUAGE_NONE][0];
+
+      if (isset($billing_customer_address['street_block'])) {
+        $billing_customer_address['street_block']['premise']['#access'] = false;
+        $billing_customer_address['street_block']['thoroughfare']['#title'] = t('Address');
+      }
+
+      if (isset($billing_customer_address['locality_block'])) {
+        $locality = &$billing_customer_address['locality_block'];
+        array_shift($locality['#attributes']);
+        $locality['#weight'] = -10;
+        $locality['postal_code']['#required'] = false;
+        $locality['postal_code']['#access'] = false;
+        $locality['administrative_area']['#required'] = false;
+        $locality['administrative_area']['#access'] = false;
+      }
+    }
+
+  }
+
+  if ($form_id == 'commerce_checkout_form_checkout' || $form_id == 'commerce_addressbook_customer_profile_form') {
+    drupal_add_js(libraries_get_path('maskedinput') . '/jquery.maskedinput-1.3.js');
+    drupal_add_js("(function($) {
+
+      $('input#edit-customer-profile-shipping-field-phone-und-0-value, input#edit-field-phone-und-0-value, input#edit-customer-profile-shipping-field-phone-und-0-value--2').mask('+38 (999) 999-99-99');
+    })(jQuery);", array('type' => 'inline', 'scope' => 'footer'));
+  }
+
+  if ( $form_id == 'commerce_order_ui_order_form' ) {
+    if (isset($form['commerce_customer_shipping'][LANGUAGE_NONE]['profiles'][0]['commerce_customer_address'][LANGUAGE_NONE][0])) {
+      $commerce_customer_address = &$form['commerce_customer_shipping'][LANGUAGE_NONE]['profiles'][0]['commerce_customer_address'][LANGUAGE_NONE][0];
+      $commerce_customer_address['street_block']['premise']['#access'] = false;
+      $commerce_customer_address['street_block']['thoroughfare']['#title'] = t('Address');
+
+      array_shift($commerce_customer_address['locality_block']['#attributes']);
+      $commerce_customer_address['locality_block']['#weight'] = -10;
+      $commerce_customer_address['locality_block']['postal_code']['#required'] = false;
+      $commerce_customer_address['locality_block']['postal_code']['#access'] = false;
+      $commerce_customer_address['locality_block']['administrative_area']['#required'] = false;
+      $commerce_customer_address['locality_block']['administrative_area']['#access'] = false;
+      $form['user']['#type'] = 'container';
+    }
+  }
+
+  if ($form_id == 'commerce_customer_ui_customer_profile_form' || $form_id == 'commerce_addressbook_customer_profile_form') {
+    if (isset($form['commerce_customer_address'][LANGUAGE_NONE][0])) {
+      $commerce_customer_address_2 = $form['commerce_customer_address'][LANGUAGE_NONE][0];
+      $commerce_customer_address_2['street_block']['premise']['#access'] = false;
+      $commerce_customer_address_2['street_block']['thoroughfare']['#title'] = t('Address');
+
+      array_shift($commerce_customer_address_2['locality_block']['#attributes']);
+      $commerce_customer_address_2['locality_block']['#weight'] = -10;
+      $commerce_customer_address_2['locality_block']['postal_code']['#required'] = false;
+      $commerce_customer_address_2['locality_block']['postal_code']['#access'] = false;
+      $commerce_customer_address_2['locality_block']['administrative_area']['#required'] = false;
+      $commerce_customer_address_2['locality_block']['administrative_area']['#access'] = false;
+    }
+  }
+
 }
