@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+
+/**
+ * Implements hook_commerce_checkout_pane_info()
+ */
+function deweb_commerce_checkout_commerce_checkout_pane_info() {
+  $panes['deweb'] = array(
+    'title' => t('deWeb Custom Pane'),
+    'page' => 'checkout',
+    'weight' => 10,
+    'file' => 'includes/deweb_commerce_checkout.checkout_pane.inc',
+    'base' => 'deweb_commerce_checkout_pane',
+  );
+  return $panes;
+}
