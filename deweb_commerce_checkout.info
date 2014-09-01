@@ -12,6 +12,7 @@ dependencies[] = strongarm
 dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = php
+dependencies[] = masked_input
 scripts[] = js/deweb_commerce_checkout.js
 features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:2
