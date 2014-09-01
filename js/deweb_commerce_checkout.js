@@ -21,7 +21,6 @@
           self.select.find('option').each(function(){
             if ($(this).html() == self.selfText) {
               $(this).hide();
-              //console.log($(this).val());
             }          });
           if (self.select.find('option[selected=selected]').html() == self.selfText){
             $('.form-item-customer-profile-shipping-addressbook').hide();
@@ -29,7 +28,7 @@
           self.select.on('change' , function(){
             var selectValue = $(this).find('option[value='+this.value+']').html();
             if (selectValue == self.selfText) {
-              $('.delivery_checker[value=22]').click();
+              $('.delivery_checker[value=0]').click();  // 0 is term id selfDelivery mode
             }
           });
         },
@@ -37,15 +36,15 @@
           var self = this;
           if (!value) return;
           switch(value){
-            case '24':
+            case '2':  // 2 is term id for all Ukraine delivery mode
               self.locality.parents('.form-type-textfield').slideUp();
               self.locality.val(self.localityText);
-            case '23':
+            case '1':  // 1 is term id Only for Kiev delivery mode
               if (!self.fields.hasClass('expanded')){
                 self.fields.slideDown().addClass('expanded');
                 self.select.parents('.form-type-select').slideDown();
               }
-              if (value == 23) {
+              if (value == 1) {  // 1 is term id Only for Kiev delivery mode
                 self.locality.parents('.form-type-textfield').slideDown();
                 self.locality.val('');
               }
@@ -56,8 +55,7 @@
                 self.select.val('none').change();
               }
               break;
-            case '22':
-              //console.log('selfDelivery');
+            case '0': // 0 is term id selfDelivery mode
               if (self.select.size()){
                 // Check delivery checker
                 if (self.select.find('option[selected=selected]').html() != self.selfText && self.select.val() != 'none') {
@@ -65,25 +63,20 @@
                     var selfDeliveryPresent = false;
                     self.select.find('option').each(function(){
                       if ($(this).html() == self.selfText && !selfDeliveryPresent){
-                        //console.log('Set self.select value '+ $(this).attr('value'));
                         self.select.val($(this).attr('value')).change();
                         selfDeliveryPresent = true;
-                        //console.log('set delivery select to selfDeliveryText');
                      }
                     });
                    if (!selfDeliveryPresent) {
                     self.select.val('none').change();
-                    //console.log('No selfDelivery set select to none');
                    }
                 } else {
-                  //console.log('hide address');
                   self.fields.slideUp().removeClass('expanded');
                   self.address.val(self.selfText);
                   self.locality.val(self.localityText);
                   self.select.parents('.form-type-select').slideUp();
                 }
               } else {
-                //console.log('hide address and set selfDeliveryText');
                 self.fields.slideUp().removeClass('expanded');
                 self.address.val(self.selfText);
                 self.locality.val(self.localityText);
